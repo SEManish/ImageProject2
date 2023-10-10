@@ -1,0 +1,19 @@
+package com.gaudi.ai.repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.gaudi.ai.model.AdminUsers;
+
+
+@Repository
+public interface AdminUserRepository extends JpaRepository<AdminUsers, Long> {
+	List<AdminUsers> findByEmailID(String emailID);
+
+	List<AdminUsers> findByUsername(String username);
+
+	List<AdminUsers> findUserByUserID(Long userID);
+	
+}
