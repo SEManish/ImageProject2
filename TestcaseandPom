@@ -1,0 +1,53 @@
+package com.gaudi.ai.helpers;
+
+import com.gaudi.ai.exception.AppError;
+import com.gaudi.ai.response.HttpOperationResponseBean;
+import com.gaudi.ai.response.PythonSucessResponse;
+import org.springframework.http.ResponseEntity;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class ApplicationTestHelper {
+
+    public static void assertSameResponseEntity(final ResponseEntity<?> expectedResponse,
+                                                final ResponseEntity<?> actualResponse) {
+        assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode());
+        final Object expectedBody = expectedResponse.getBody();
+        final Object actualBody = actualResponse.getBody();
+
+        if (expectedBody == null && actualBody == null) {
+            return;
+        } else if (expectedBody == null || actualBody == null) {
+            fail("Either Expected or Actual response Body is null.");
+        }
+
+        if (expectedBody instanceof AppError) {
+            assertSameBody((AppError) expectedBody, (AppError) actualBody);
+        } else if (expectedBody instanceof PythonSucessResponse) {
+            assertSameBody((PythonSucessResponse) expectedBody, (PythonSucessResponse) actualBody);
+        } else if (expectedBody instanceof HttpOperationResponseBean) {
+            assertSameBody((HttpOperationResponseBean) expectedBody, (HttpOperationResponseBean) actualBody);
+        } else {
+            fail("Unknown Response Body type.");
+        }
+    }
+
+    private static void assertSameBody(final AppError expectedResponse, final AppError actualResponse) {
+        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+        assertEquals(expectedResponse.getError(), actualResponse.getError());
+        assertEquals(expectedResponse.getMessage(), actualResponse.getMessage());
+    }
+
+    private static void assertSameBody(final HttpOperationResponseBean expectedResponse,
+                                       final HttpOperationResponseBean actualResponse) {
+        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+        assertEquals(expectedResponse.getMessage(), actualResponse.getMessage());
+    }
+
+    private static void assertSameBody(final PythonSucessResponse expectedResponse,
+                                       final PythonSucessResponse actualResponse) {
+        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+        assertEquals(expectedResponse.getMessage(), actualResponse.getMessage());
+    }
+}
